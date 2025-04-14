@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { UploadService } from '../../services/upload.service';
+import { WhisperService } from '../../services/whisper.service';
+import { HttpEventType } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,9 +12,9 @@ import { CommonModule } from '@angular/common';
 export class FileUploadComponent {
   dragging = false;
   files: File[] = [];
-  uploadProgress: { [key: string]: number } = {};
-  uploadComplete: { [key: string]: boolean } = {};
+  transcriptions: { [key: string]: string } = {};
   errorMessage: string = '';
+  progress: { [key: string]: number } = {};
 
   private readonly validVideoTypes = [
     'video/mp4',
@@ -24,7 +25,7 @@ export class FileUploadComponent {
     'video/x-ms-wmv'
   ];
 
-  constructor(private uploadService: UploadService) {}
+  constructor(private whisperService: WhisperService) {}
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -65,32 +66,38 @@ export class FileUploadComponent {
     }
 
     this.files = [...this.files, ...validFiles];
-    this.uploadFiles(validFiles);
+    this.transcribeFiles(validFiles);
   }
 
   private isValidVideoFile(file: File): boolean {
     return this.validVideoTypes.includes(file.type);
   }
 
-  private uploadFiles(files: File[]): void {
+  private transcribeFiles(files: File[]): void {
     files.forEach(file => {
-      this.uploadProgress[file.name] = 0;
-      this.uploadComplete[file.name] = false;
-
-      this.uploadService.uploadFile(file).subscribe({
-        next: (progress) => {
-          this.uploadProgress[file.name] = progress.progress;
-          this.uploadComplete[file.name] = progress.completed;
+      this.progress[file.name] = 0;
+      this.whisperService.transcribeVideo(file).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            this.progress[file.name] = Math.round(100 * event.loaded / (event.total || 1));
+          } else if (event.type === HttpEventType.Response) {
+            this.transcriptions[file.name] = event.body.text;
+            this.progress[file.name] = 100;
+          }
         },
         error: (error) => {
-          console.error('Upload failed:', error);
-          this.errorMessage = `Failed to upload ${file.name}: ${error.message}`;
+          console.error('Transcription failed:', error);
+          this.errorMessage = `Failed to transcribe ${file.name}: ${error.message}`;
+          delete this.progress[file.name];
         }
       });
     });
   }
 
   removeFile(index: number): void {
+    const file = this.files[index];
+    delete this.transcriptions[file.name];
+    delete this.progress[file.name];
     this.files.splice(index, 1);
   }
 }

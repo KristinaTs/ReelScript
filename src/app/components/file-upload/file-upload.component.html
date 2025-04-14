@@ -30,11 +30,14 @@
       <li *ngFor="let file of files; let i = index">
         <div class="file-info">
           <span>{{ file.name }}</span>
-          <div class="progress-container" *ngIf="!uploadComplete[file.name]">
-            <div class="progress-bar" [style.width.%]="uploadProgress[file.name]"></div>
-            <span class="progress-text">{{ uploadProgress[file.name] }}%</span>
+          <div class="progress-container" *ngIf="progress[file.name] !== undefined && progress[file.name] < 100">
+            <div class="progress-bar" [style.width.%]="progress[file.name]"></div>
+            <span class="progress-text">{{ progress[file.name] }}%</span>
           </div>
-          <span class="upload-complete" *ngIf="uploadComplete[file.name]">✓</span>
+          <div class="transcription" *ngIf="transcriptions[file.name]">
+            <h4>Transcription:</h4>
+            <p>{{ transcriptions[file.name] }}</p>
+          </div>
         </div>
         <button class="remove-btn" (click)="removeFile(i)">×</button>
       </li>
