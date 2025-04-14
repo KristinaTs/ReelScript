@@ -1,0 +1,43 @@
+<div class="file-upload-container"
+     [class.dragging]="dragging"
+     (dragover)="onDragOver($event)"
+     (dragleave)="onDragLeave($event)"
+     (drop)="onDrop($event)">
+  
+  <div class="upload-area">
+    <input type="file" 
+           #fileInput
+           multiple
+           accept="video/*"
+           (change)="onFileSelected($event)"
+           class="file-input">
+    
+    <div class="upload-content">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p>Drag and drop video files here</p>
+      <p>or</p>
+      <button (click)="fileInput.click()">Choose Video Files</button>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="file-list" *ngIf="files.length > 0">
+    <h3>Selected Files:</h3>
+    <ul>
+      <li *ngFor="let file of files; let i = index">
+        <div class="file-info">
+          <span>{{ file.name }}</span>
+          <div class="progress-container" *ngIf="!uploadComplete[file.name]">
+            <div class="progress-bar" [style.width.%]="uploadProgress[file.name]"></div>
+            <span class="progress-text">{{ uploadProgress[file.name] }}%</span>
+          </div>
+          <span class="upload-complete" *ngIf="uploadComplete[file.name]">✓</span>
+        </div>
+        <button class="remove-btn" (click)="removeFile(i)">×</button>
+      </li>
+    </ul>
+  </div>
+</div>
