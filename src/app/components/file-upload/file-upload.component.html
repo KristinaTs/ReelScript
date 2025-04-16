@@ -1,49 +1,42 @@
-<div class="file-upload-container"
-     [class.dragging]="dragging"
-     (dragover)="onDragOver($event)"
-     (dragleave)="onDragLeave($event)"
-     (drop)="onDrop($event)">
-  
-  <div class="upload-area">
-    <input type="file" 
-           #fileInput
-           multiple
-           accept="video/*"
-           (change)="onFileSelected($event)"
-           class="file-input">
-    
-    <div class="upload-content">
-      <i class="fas fa-cloud-upload-alt"></i>
-      <p>Drag and drop video files here</p>
-      <p>or</p>
-      <button (click)="fileInput.click()">Choose Video Files</button>
+<div class="file-upload-container">
+  <div class="upload-area" 
+       [class.dragging]="dragging"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)">
+    <input 
+      type="file" 
+      id="fileInput" 
+      (change)="onFileSelected($event)"
+      accept="video/*"
+      class="file-input"
+    >
+    <label for="fileInput" class="upload-label">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Choose a video file or drag it here</div>
+    </label>
+  </div>
+
+  <div class="selected-file" *ngIf="selectedFile">
+    <div class="file-info">
+      <span class="file-name">{{ selectedFile.name }}</span>
+      <button class="remove-btn" (click)="removeFile()">×</button>
     </div>
+    <button 
+      class="upload-btn" 
+      (click)="onUpload()"
+      [disabled]="isProcessing">
+      {{ isProcessing ? 'Processing...' : 'Process Video' }}
+    </button>
   </div>
 
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
+  <div class="error-message" *ngIf="error">
+    {{ error }}
   </div>
 
-  <div class="file-list" *ngIf="files.length > 0">
-    <h3>Selected Files:</h3>
-    <ul>
-      <li *ngFor="let file of files; let i = index">
-        <div class="file-info">
-          <span>{{ file.name }}</span>
-          <div class="progress-container" *ngIf="progress[file.name] !== undefined && progress[file.name] < 100">
-            <div class="progress-bar" [style.width.%]="progress[file.name]"></div>
-            <span class="progress-text">{{ progress[file.name] }}%</span>
-          </div>
-          <div class="transcription" *ngIf="transcriptions[file.name]">
-            <h4>Transcription:</h4>
-            <p>{{ transcriptions[file.name].text }}</p>
-            <button class="download-btn" (click)="downloadSRT(file.name)">
-              <i class="fas fa-download"></i> Download SRT
-            </button>
-          </div>
-        </div>
-        <button class="remove-btn" (click)="removeFile(i)">×</button>
-      </li>
-    </ul>
-  </div>
+  <app-subtitle-preview
+    *ngIf="videoUrl && srtContent"
+    [videoUrl]="videoUrl"
+    [srtContent]="srtContent">
+  </app-subtitle-preview>
 </div>

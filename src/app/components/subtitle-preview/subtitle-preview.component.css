@@ -1,0 +1,81 @@
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.video-player {
+  width: 100%;
+  display: block;
+}
+
+.subtitle-container {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.current-subtitle {
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.subtitle-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.subtitle-item:last-child {
+  border-bottom: none;
+}
+
+.subtitle-time {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle-text {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Custom scrollbar for subtitle list */
+.subtitle-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.subtitle-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.subtitle-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.subtitle-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} 

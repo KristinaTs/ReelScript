@@ -1,0 +1,28 @@
+<div class="preview-container">
+  <div class="video-container">
+    <video 
+      [src]="videoUrl" 
+      controls
+      (timeupdate)="onTimeUpdate($event)"
+      class="video-player">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
+  <div class="subtitle-container">
+    <div class="current-subtitle" *ngIf="currentSubtitle">
+      {{ currentSubtitle.text }}
+    </div>
+    
+    <div class="subtitle-list" *ngIf="!currentSubtitle">
+      <div class="subtitle-item" *ngFor="let subtitle of subtitles">
+        <div class="subtitle-time">
+          {{ subtitle.startTime }} --> {{ subtitle.endTime }}
+        </div>
+        <div class="subtitle-text">
+          {{ subtitle.text }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
