@@ -36,7 +36,10 @@
           </div>
           <div class="transcription" *ngIf="transcriptions[file.name]">
             <h4>Transcription:</h4>
-            <p>{{ transcriptions[file.name] }}</p>
+            <p>{{ transcriptions[file.name].text }}</p>
+            <button class="download-btn" (click)="downloadSRT(file.name)">
+              <i class="fas fa-download"></i> Download SRT
+            </button>
           </div>
         </div>
         <button class="remove-btn" (click)="removeFile(i)">×</button>

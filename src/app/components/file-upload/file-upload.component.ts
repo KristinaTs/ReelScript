@@ -3,6 +3,11 @@ import { TranscriptionService } from '../../services/transcription.service';
 import { HttpEventType } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
+interface TranscriptionData {
+  text: string;
+  srt: string;
+}
+
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
@@ -12,7 +17,7 @@ import { CommonModule } from '@angular/common';
 export class FileUploadComponent {
   dragging = false;
   files: File[] = [];
-  transcriptions: { [key: string]: string } = {};
+  transcriptions: { [key: string]: TranscriptionData } = {};
   errorMessage: string = '';
   progress: { [key: string]: number } = {};
 
@@ -77,13 +82,13 @@ export class FileUploadComponent {
     files.forEach(file => {
       this.progress[file.name] = 0;
       this.transcriptionService.transcribeVideo(file).subscribe({
-        next: (event) => {
-          if (event.type === HttpEventType.UploadProgress) {
-            this.progress[file.name] = Math.round(100 * event.loaded / (event.total || 1));
-          } else if (event.type === HttpEventType.Response) {
-            this.transcriptions[file.name] = event.body.text;
-            this.progress[file.name] = 100;
-          }
+        next: (response) => {
+          const srt = this.transcriptionService.convertToSRT(response);
+          this.transcriptions[file.name] = {
+            text: response.text,
+            srt: srt
+          };
+          this.progress[file.name] = 100;
         },
         error: (error) => {
           console.error('Transcription failed:', error);
@@ -99,5 +104,20 @@ export class FileUploadComponent {
     delete this.transcriptions[file.name];
     delete this.progress[file.name];
     this.files.splice(index, 1);
+  }
+
+  downloadSRT(fileName: string): void {
+    const transcription = this.transcriptions[fileName];
+    if (transcription) {
+      const blob = new Blob([transcription.srt], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${fileName.split('.')[0]}.srt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
   }
 }
