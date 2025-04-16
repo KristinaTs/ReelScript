@@ -6,21 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class WhisperService {
-  private readonly apiUrl = 'https://api.openai.com/v1/audio/transcriptions';
-  private readonly apiKey = 'YOUR_OPENAI_API_KEY'; // Replace with your actual API key
-
+  private readonly apiUrl = 'http://localhost:3000/transcribe';
+ 
   constructor(private http: HttpClient) {}
 
   transcribeVideo(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('model', 'whisper-1');
-    formData.append('response_format', 'json');
 
-    return this.http.post(this.apiUrl, formData, {
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`
-      }
-    });
+    return this.http.post<{ text: string }>(this.apiUrl, formData);
   }
 } 
