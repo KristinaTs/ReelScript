@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { WhisperService } from '../../services/whisper.service';
+import { TranscriptionService } from '../../services/transcription.service';
 import { HttpEventType } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
@@ -25,7 +25,7 @@ export class FileUploadComponent {
     'video/x-ms-wmv'
   ];
 
-  constructor(private whisperService: WhisperService) {}
+  constructor(private transcriptionService: TranscriptionService) {}
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -76,7 +76,7 @@ export class FileUploadComponent {
   private transcribeFiles(files: File[]): void {
     files.forEach(file => {
       this.progress[file.name] = 0;
-      this.whisperService.transcribeVideo(file).subscribe({
+      this.transcriptionService.transcribeVideo(file).subscribe({
         next: (event) => {
           if (event.type === HttpEventType.UploadProgress) {
             this.progress[file.name] = Math.round(100 * event.loaded / (event.total || 1));
