@@ -7,14 +7,14 @@
       class="video-player">
       Your browser does not support the video tag.
     </video>
-  </div>
-  
-  <div class="subtitle-container">
-    <div class="current-subtitle" *ngIf="currentSubtitle">
+    <div class="subtitle-overlay" *ngIf="currentSubtitle">
       {{ currentSubtitle.text }}
     </div>
-    
-    <div class="subtitle-list" *ngIf="!currentSubtitle">
+  </div>
+  
+  <div class="subtitle-list-container" *ngIf="!currentSubtitle">
+    <h3>Subtitles</h3>
+    <div class="subtitle-list">
       <div class="subtitle-item" *ngFor="let subtitle of subtitles">
         <div class="subtitle-time">
           {{ subtitle.startTime }} --> {{ subtitle.endTime }}
